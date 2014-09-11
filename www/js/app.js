@@ -10,13 +10,29 @@ svg.selectAll("rect")
     .data(dataset)
     .enter()
     .append("rect")
-    .attr("x",function(d,i){
-        return i * (w / dataset.length);
-    })
-    .attr("y",function(d){
-        return h - (d);
-    })
-    .attr("width",w/dataset.length - padding)
-    .attr("height",function(d){
-        return d;
-    })
+    .attr({
+        x:function(d,i){
+            return i * (w / dataset.length);
+        },
+        y : function(d){
+            return h - (d);
+        },
+        width : w/dataset.length - padding,
+        height : function(d){
+            return d;
+        }
+    });
+
+svg.selectAll("text")
+    .data(dataset)
+    .enter()
+    .append("text")
+    .text(function(d){return d;})
+    .attr({
+        "text-anchor":"middle",
+        x: function(d,i){return i*(w/dataset.length)+(w/dataset.length - padding) /2;},
+        y: function(d) {return h - (d*4)+14; },
+        "font-family":"sans-serif",
+        "font-size":12,
+        "fill":"#000000"
+    });
