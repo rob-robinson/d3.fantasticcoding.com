@@ -7,28 +7,18 @@
 
     <style>
 
-        .node circle {
-            fill: #fff;
-            stroke: steelblue;
-            stroke-width: 1.5px;
-        }
-
-        .node {
-            font: 10px sans-serif;
-        }
-
-        .link {
-            fill: none;
-            stroke: #ccc;
-            stroke-width: 1.5px;
-        }
+    donut-chart {
+        width:100%;
+        height:100%;
+        /*position:absolute;*/
+    }
 
     </style>
 
 </head>
 <body ng-app="myApp" ng-controller="DonutChartController">
 
-<donut-chart data="chart" ng-repeat="chart in charts"></donut-chart>
+<donut-chart data="chart" ng-repeat="chart in charts" ng-style="{width:100/charts.length + '%'}"></donut-chart>
 
 <script>
 
