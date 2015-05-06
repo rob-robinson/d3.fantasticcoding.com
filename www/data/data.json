@@ -1,0 +1,16 @@
+[
+  {"key":"other","value":10516},
+  {"key":"american indian or alaska native","value":1226},
+  {"key":"asian","value":988},
+  {"key":"black or african american","value":733},
+  {"key":"hispanic","value":106},
+  {"key":"multi","value":362},
+  {"key":"multi-ethnic","value":42},
+  {"key":"n/a","value":4},
+  {"key":"native hawaiian or other pacific islander","value":205},
+  {"key":"non-hispanic","value":8},
+  {"key":"non-us native american","value":918},
+  {"key":"two or more","value":16},
+  {"key":"unknown/unspecified","value":7},
+  {"key":"white","value":13419}
+]

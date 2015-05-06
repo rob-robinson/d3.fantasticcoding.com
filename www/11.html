@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html>
+<head>
+
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.3.0/angular.min.js"></script>
+    <script src="http://d3js.org/d3.v3.js" charset="utf-8"></script>
+    <style>
+        .axis { font: 10px sans-serif;  }
+        .axis path, .axis line { fill: none; stroke: #000; shape-rendering: crispEdges; }
+    </style>
+</head>
+<body ng-app="myApp" ng-controller="DonutChartController">
+
+<input id="test" type="range" step="10"/>
+
+<donut-chart></donut-chart>
+
+<script>
+
+    var app = angular.module('myApp', []);
+
+    app.factory('chartData', function(){
+        return {
+            "key" : "",
+            "values" : [
+                {"key":"other","value":10516},
+                {"key":"american indian or alaska native","value":1226},
+                {"key":"asian","value":988},
+                {"key":"black or african american","value":733},
+                {"key":"hispanic","value":106},
+                {"key":"multi","value":362},
+                {"key":"multi-ethnic","value":42},
+                {"key":"n/a","value":4},
+                {"key":"native hawaiian or other pacific islander","value":205},
+                {"key":"non-hispanic","value":8},
+                {"key":"non-us native american","value":918},
+                {"key":"two or more","value":16},
+                {"key":"unknown/unspecified","value":7},
+                {"key":"white","value":13419}
+            ]};
+    });
+
+    app.controller('DonutChartController', ['$scope', 'chartData', '$interval', function($scope, chartData, $interval){
+        $scope.charts = chartData;
+
+        $interval(function() {
+            var hour = $scope.charts.length + 1;
+            var sales = Math.round(Math.random() * 100);
+
+            $scope.charts.values.push({key: hour, value: sales});
+        }, 1000, 10);
+
+    }]);
+
+    app.directive('donutChart', function(chartData) {
+
+        function link(scope, el) {
+
+            function drawBarChart(){
+                var data = chartData.values;
+
+                data = data.sort(function (a, b) {
+                    return b.value - a.value;
+                });
+
+                var margin = {top: 20, right: 20, bottom: 70, left: 40},
+                        width = 600 - margin.left - margin.right,
+                        height = 300 - margin.top - margin.bottom;
+
+                var x = d3.scale.ordinal().rangeRoundBands([0, width], .05);
+
+                var y = d3.scale.linear().range([height, 0]);
+
+                var xAxis = d3.svg.axis()
+                        .scale(x)
+                        .orient("bottom");
+
+                var yAxis = d3.svg.axis()
+                        .scale(y)
+                        .orient("left")
+                        .ticks(10);
+
+                var svg = d3.select("body").append("svg")
+                        .attr("width", width + margin.left + margin.right)
+                        .attr("height", height + margin.top + margin.bottom)
+                        .append("g")
+                        .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+
+
+                x.domain(data.map(function (d) {
+                    return d.key;
+                }));
+                y.domain([0, d3.max(data, function (d) {
+                    return d.value;
+                })]);
+
+                svg.append("g")
+                        .attr("class", "x axis")
+                        .attr("transform", "translate(0," + height + ")")
+                        .call(xAxis)
+                        .selectAll("text")
+                        .style("text-anchor", "end")
+                        .attr("dx", "-.8em")
+                        .attr("dy", "-.55em")
+                        .attr("transform", "rotate(-90)");
+
+                svg.append("g")
+                        .attr("class", "y axis")
+                        .call(yAxis)
+                        .append("text")
+                        .attr("transform", "rotate(-90)")
+                        .attr("y", 6)
+                        .attr("dy", ".71em")
+                        .style("text-anchor", "end")
+                        .text("Value ($)");
+
+                svg.selectAll("bar")
+                        .data(data)
+                        .enter().append("rect")
+                        .style("fill", "steelblue")
+                        .attr({
+                            x: function (d) {
+                                return x(d.key);
+                            },
+                            width: x.rangeBand(),
+                            y: function (d) {
+                                return y(d.value);
+                            },
+                            height: function (d) {
+                                return height - y(d.value);
+                            }
+                        });
+            }
+
+            drawBarChart();
+
+            scope.$watchCollection(exp, function(newVal, oldVal){
+                //salesDataToPlot=newVal;
+                console.log(newVal);
+                drawBarChart();
+            });
+
+
+        }
+        return {
+            link:link,
+            restrict: 'E'
+        }
+    });
+</script>
+</body>
+</html>
