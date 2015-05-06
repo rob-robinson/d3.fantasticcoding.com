@@ -11,58 +11,72 @@
 </head>
 <body ng-app="myApp" ng-controller="DonutChartController">
 
-<input id="test" type="range" step="10"/>
-
-<donut-chart></donut-chart>
+<donut-chart charts="charts"></donut-chart>
 
 <script>
 
     var app = angular.module('myApp', []);
 
-    app.factory('chartData', function(){
+    app.factory('chartData', function() {
+
+        var data =  {"values" : [
+            {"key":"other","value":10516},
+            {"key":"american indian or alaska native","value":1226},
+            {"key":"asian","value":988},
+            {"key":"black or african american","value":733},
+            {"key":"hispanic","value":106},
+            {"key":"multi","value":362},
+            {"key":"multi-ethnic","value":42},
+            {"key":"n/a","value":4},
+            {"key":"native hawaiian or other pacific islander","value":205},
+            {"key":"non-hispanic","value":8},
+            {"key":"non-us native american","value":918},
+            {"key":"two or more","value":16},
+            {"key":"unknown/unspecified","value":7},
+            {"key":"white","value":13419}
+        ]};
 
         return {
-            "key" : "",
-            "values" : [
-                {"key":"other","value":10516},
-                {"key":"american indian or alaska native","value":1226},
-                {"key":"asian","value":988},
-                {"key":"black or african american","value":733},
-                {"key":"hispanic","value":106},
-                {"key":"multi","value":362},
-                {"key":"multi-ethnic","value":42},
-                {"key":"n/a","value":4},
-                {"key":"native hawaiian or other pacific islander","value":205},
-                {"key":"non-hispanic","value":8},
-                {"key":"non-us native american","value":918},
-                {"key":"two or more","value":16},
-                {"key":"unknown/unspecified","value":7},
-                {"key":"white","value":13419}
-            ]};
+            getData : function() {
+                return data;
+            },
+
+            addData : function (item){
+                data.values.push(item);
+            }
+        }
     });
 
     app.controller('DonutChartController', ['$scope', 'chartData', '$interval', function($scope, chartData, $interval){
-        $scope.charts = chartData;
+        $scope.charts = chartData.getData().values;
 
         $interval(function() {
-            var hour = $scope.charts.length + 1;
-            var sales = Math.round(Math.random() * 100);
 
-            $scope.charts.values.push({key: hour, value: sales});
+            //$scope.$apply(function(){
+
+                var hour = $scope.charts.length + 1;
+                var sales = Math.round(Math.random() * 100);
+
+                chartData.addData({key: hour, value: sales*1000});
+
+//                console.log($scope.charts);
+
+                //$scope.$digest();
+
+//            });
+
         }, 1000, 10);
 
     }]);
 
     app.directive('donutChart', function(chartData) {
 
-        function link(scope, el) {
+        function link(scope, el, attrs) {
 
             function drawBarChart(){
-                var data = chartData.values;
+                //var data = scope.charts;
 
-                data = data.sort(function (a, b) {
-                    return b.value - a.value;
-                });
+            console.log(scope.charts);
 
                 var margin = {top: 20, right: 20, bottom: 70, left: 40},
                         width = 600 - margin.left - margin.right,
@@ -81,17 +95,17 @@
                         .orient("left")
                         .ticks(10);
 
-                var svg = d3.select("body").append("svg")
+                var svg = d3.select("donut-chart")
+                        .append("svg")
                         .attr("width", width + margin.left + margin.right)
                         .attr("height", height + margin.top + margin.bottom)
                         .append("g")
                         .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
-
-                x.domain(data.map(function (d) {
+                x.domain(scope.charts.map(function (d) {
                     return d.key;
                 }));
-                y.domain([0, d3.max(data, function (d) {
+                y.domain([0, d3.max(scope.charts, function (d) {
                     return d.value;
                 })]);
 
@@ -116,7 +130,7 @@
                         .text("Value ($)");
 
                 svg.selectAll("bar")
-                        .data(data)
+                        .data(scope.charts)
                         .enter().append("rect")
                         .style("fill", "steelblue")
                         .attr({
@@ -133,19 +147,19 @@
                         });
             }
 
-            drawBarChart();
+            //drawBarChart();
 
-            scope.$watchCollection(exp, function(newVal, oldVal){
-                //salesDataToPlot=newVal;
-                console.log(newVal);
+            scope.$watchCollection('charts', function(newVal, oldVal){
+                console.log("...");
                 drawBarChart();
-            });
-
-
+            }, true);
         }
         return {
             link:link,
-            restrict: 'E'
+            restrict: 'E',
+            scope: {
+                charts: '='
+            }
         }
     });
 </script>

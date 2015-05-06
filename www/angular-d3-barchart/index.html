@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+  <head>
+    <meta charset="utf-8">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap.min.css">
+    <link type="text/css" rel="stylesheet" href="style.css"/>
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.3.14/angular.js"></script>
+    <script src="http://d3js.org/d3.v3.min.js"></script>
+    <script src="src.js"></script>
+  </head>
+  <body>
+    <div ng-app="main">
+      <div ng-controller="MainController">
+        <div class="row">
+          <div class="span2">
+            <button class="btn btn-success" ng-click="update()">update</button>
+          </div>
+          <div class="span2" id="sum">
+            TOTAL: {{sum}} 
+          </div>
+        </div>
+        <chart-bar data="data" summed="summed(args)"></chart-bar>
+      </div>
+    </div>
+    <script type="text/javascript">
+var main = angular.module('main', [])
+//    .config(['$routeProvider', function($routeProvider) {
+//      $routeProvider.when('/', { controller: MainController });
+//    }])
+;
+
+// Controllers
+var MainController = ['$scope','chartData', function($scope, chartData) {
+  $scope.randomize = function(n, y) {
+    if (arguments.length < 2) y = 400;
+    if (!arguments.length) n = 20;
+    var i = 0;
+    return d3.range(~~(Math.random()*n) + 1).map(function(d, i) { return {
+              x: ++i,
+              y: ~~(Math.random()*y)
+            }});
+  };
+  $scope.update = function() { 
+    $scope.data = $scope.randomize(); 
+    $scope.sum = 0;
+  };          
+  $scope.summed = function() {
+    // there has to be a better way to pass variables,
+    // still learning angular
+    var extent = arguments[0][0], 
+        x = arguments[0][1],
+        l = $scope.data.length;
+    $scope.sum = 0;
+    for (var i = 0; i < l; i++) {
+      var d = $scope.data[i];
+      if (extent[0] <= x(d.x) && x(d.x) + x.rangeBand() <= extent[1]) {
+        $scope.sum += d.y;
+      }
+    }
+    $scope.$apply();
+  };
+  // Models
+  $scope.sum = 0;
+  $scope.data = $scope.randomize();
+  //$scope.data = chartData.values;
+}];
+
+// factory:
+main.factory('chartData', function(){
+  return {
+    "key" : "",
+    "values" : [
+      {"key":"other","value":10516},
+      {"key":"american indian or alaska native","value":1226},
+      {"key":"asian","value":988},
+      {"key":"black or african american","value":733},
+      {"key":"hispanic","value":106},
+      {"key":"multi","value":362},
+      {"key":"multi-ethnic","value":42},
+      {"key":"n/a","value":4},
+      {"key":"native hawaiian or other pacific islander","value":205},
+      {"key":"non-hispanic","value":8},
+      {"key":"non-us native american","value":918},
+      {"key":"two or more","value":16},
+      {"key":"unknown/unspecified","value":7},
+      {"key":"white","value":13419}
+    ]};
+});
+
+
+// Views
+main.directive('chartBar', function() {
+  var bar = charts.bar();    
+  return {
+    restrict: 'E',
+    replace: true,
+    template: '<div class="chart"></div>',
+    scope: {
+      data: '=',
+      // barebone for now
+      summed: '&'
+    },
+    link: function($scope, $element, $attr) {
+      var div = d3.select($element[0]);
+      bar.on('brush', function() {
+        var extent = d3.event.target.extent(),
+            x = bar.x();
+        $scope.summed({args:[extent, x]});
+      });
+      bar.on('brushend', function() {
+        var extent = d3.event.target.extent(),
+            x = bar.x();
+        $scope.summed({args:[extent, x]});
+      });
+      $scope.$watch('data', function(newVal, oldVal) {
+        if(newVal) div.datum(newVal).call(bar);
+      });
+    }
+  }
+});
+    </script>
+  </body>
+</html>
