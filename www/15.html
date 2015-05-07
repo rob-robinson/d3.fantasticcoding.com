@@ -52,18 +52,10 @@
 
         $interval(function() {
 
-            //$scope.$apply(function(){
-
                 var hour = $scope.charts.length + 1;
                 var sales = Math.round(Math.random() * 100);
 
-                chartData.addData({key: hour, value: sales*1000});
-
-//                console.log($scope.charts);
-
-                //$scope.$digest();
-
-//            });
+                chartData.addData({key: hour, value: hour*1000});
 
         }, 1000, 10);
 
@@ -74,9 +66,6 @@
         function link(scope, el, attrs) {
 
             function drawBarChart(){
-                //var data = scope.charts;
-
-            console.log(scope.charts);
 
                 var margin = {top: 20, right: 20, bottom: 70, left: 40},
                         width = 600 - margin.left - margin.right,
@@ -95,10 +84,15 @@
                         .orient("left")
                         .ticks(10);
 
+                // clear any current svg in donut-chart
+                d3.select("donut-chart").selectAll("svg").remove();
+
                 var svg = d3.select("donut-chart")
                         .append("svg")
-                        .attr("width", width + margin.left + margin.right)
-                        .attr("height", height + margin.top + margin.bottom)
+                        .attr({
+                            "width": width + margin.left + margin.right,
+                            "height": height + margin.top + margin.bottom
+                            })
                         .append("g")
                         .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
@@ -115,17 +109,21 @@
                         .call(xAxis)
                         .selectAll("text")
                         .style("text-anchor", "end")
-                        .attr("dx", "-.8em")
-                        .attr("dy", "-.55em")
-                        .attr("transform", "rotate(-90)");
+                        .attr({
+                            "dx": "-.8em",
+                            "dy": "-.55em",
+                            "transform": "rotate(-90)"
+                        })
 
                 svg.append("g")
                         .attr("class", "y axis")
                         .call(yAxis)
                         .append("text")
-                        .attr("transform", "rotate(-90)")
-                        .attr("y", 6)
-                        .attr("dy", ".71em")
+                        .attr({
+                            "transform": "rotate(-90)",
+                            "y": 6,
+                            "dy": ".71em"
+                            })
                         .style("text-anchor", "end")
                         .text("Value ($)");
 
@@ -147,10 +145,8 @@
                         });
             }
 
-            //drawBarChart();
-
             scope.$watchCollection('charts', function(newVal, oldVal){
-                console.log("...");
+                //console.log("...");
                 drawBarChart();
             }, true);
         }
