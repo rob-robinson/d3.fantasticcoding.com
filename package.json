@@ -1,0 +1,11 @@
+{
+  "name": "d3.fantasticcoding.com",
+  "private": true,
+  "engines": {
+    "node": ">=0.10.0"
+  },
+  "devDependencies": {
+    "gulp": "^3.9.0",
+    "gulp-s3": "^0.3.0"
+  }
+}
