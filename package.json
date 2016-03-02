@@ -1,11 +1,14 @@
 {
   "name": "d3.fantasticcoding.com",
   "private": true,
+  "scripts": {
+    "run": "gulp serve"
+  },
   "engines": {
     "node": ">=0.10.0"
   },
   "devDependencies": {
-    "gulp": "^3.9.0",
-    "gulp-s3": "^0.3.0"
+    "browser-sync": "^2.11.1",
+    "gulp": "^3.9.1"
   }
 }
