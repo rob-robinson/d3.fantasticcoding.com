@@ -2,13 +2,12 @@
   "name": "d3.fantasticcoding.com",
   "private": true,
   "scripts": {
-    "run": "gulp serve"
+    "run": "browser-sync start --server app --files '*.html, js/*'"
   },
   "engines": {
     "node": ">=0.10.0"
   },
   "devDependencies": {
-    "browser-sync": "^2.11.1",
-    "gulp": "^3.9.1"
+    "browser-sync": "^2.11.1"
   }
 }
