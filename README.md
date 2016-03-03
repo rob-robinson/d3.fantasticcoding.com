@@ -7,5 +7,5 @@ A place to play with graphing / charting libraries ... especially d3 ...
 git clone https://github.com/rob-robinson/d3.fantasticcoding.com.git
 cd d3.fantasticcoding.com
 npm install
-npm run run
+npm start
 ```
