@@ -2,7 +2,7 @@
   "name": "d3.fantasticcoding.com",
   "private": true,
   "scripts": {
-    "start": "browser-sync start --server app --files '*.html, js/*'"
+    "start": "browser-sync start --server app --files 'app/*.html, app/js/*, app/css/*'"
   },
   "engines": {
     "node": ">=0.10.0"
